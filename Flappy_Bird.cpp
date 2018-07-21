@@ -143,7 +143,7 @@ int gameover() {		//游戏结束时执行
 
 int Init() {
 
-	system("mode con cols=150 lines=35");		//固定命令行大小 
+	system("mode con cols=150 lines=35");		//设置命令行大小 
 	SetConsoleTitle("Flappy Bird");				//命令行标题 
 
 	//隐藏命令行光标 
