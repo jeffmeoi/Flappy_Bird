@@ -11,12 +11,12 @@
 
 using namespace std;
 
-const int LINES = 35, COLS = 150;		//ĞĞÊıºÍÁĞÊı 
-const int startX = 50, startY = 10;		//birdµÄÆğÊ¼×ø±ê 
-const int dist = 10, spaces = 5;		//distÎªË®Æ½·½ÏòÃ¿Á½ÌõÊú¹ÜµÀµÄË®Æ½¾àÀë,spacesÎªÊúÖ±·½ÏòÉÏÁ½Ìõ¹ÜµÀµÄÊúÖ±¾àÀë 
-//disÊı×é½üËÆÎªÒ»¸öÅ×ÎïÏß,¼´ÉÏÉıÓÖÏÂÂä 
+const int LINES = 35, COLS = 150;		//è¡Œæ•°å’Œåˆ—æ•° 
+const int startX = 50, startY = 10;		//birdçš„èµ·å§‹åæ ‡ 
+const int dist = 10, spaces = 5;		//distä¸ºæ°´å¹³æ–¹å‘æ¯ä¸¤æ¡ç«–ç®¡é“çš„æ°´å¹³è·ç¦»,spacesä¸ºç«–ç›´æ–¹å‘ä¸Šä¸¤æ¡ç®¡é“çš„ç«–ç›´è·ç¦» 
+//disæ•°ç»„è¿‘ä¼¼ä¸ºä¸€ä¸ªæŠ›ç‰©çº¿,å³ä¸Šå‡åˆä¸‹è½ 
 const int dis[] = {-1, -1, -1, 0, 1, 2, 2, 2, 3, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 23, 26, 29, 32, 35};
-//12µÄASCII×Ö·û×÷ÎªÄñ,11µÄASCII×Ö·û×÷Îª·½¸ñ(×¢Òâ11µÄASCII×Ö·ûÕ¼ÁËÁ½¸öºá×ø±ê), spaceÎª¿Õ¸ñ 
+//12çš„ASCIIå­—ç¬¦ä½œä¸ºé¸Ÿ,11çš„ASCIIå­—ç¬¦ä½œä¸ºæ–¹æ ¼(æ³¨æ„11çš„ASCIIå­—ç¬¦å äº†ä¸¤ä¸ªæ¨ªåæ ‡), spaceä¸ºç©ºæ ¼ 
 char cBird = 12, cMap = 11, space = ' ';
 
 struct Bird {
@@ -24,32 +24,32 @@ struct Bird {
 	int y;
 };
 
-pthread_t tBird;		//¿ØÖÆbirdµÄÏß³Ì 
-pthread_t tMap;			//¿ØÖÆmapµÄÏß³Ì 
+pthread_t tBird;		//æ§åˆ¶birdçš„çº¿ç¨‹ 
+pthread_t tMap;			//æ§åˆ¶mapçš„çº¿ç¨‹ 
 
-Bird bird = {startX, startY};		//³õÊ¼»¯ÄñµÄ×ø±ê 
+Bird bird = {startX, startY};		//åˆå§‹åŒ–é¸Ÿçš„åæ ‡ 
 
-int map[COLS][LINES];				//Ô¤ÆÚµÄµØÍ¼ 
-int console[COLS][LINES];			//¿ØÖÆÌ¨ÖĞÏÔÊ¾µÄµØÍ¼ 
-int heights[COLS];					//heightsÎªÊú¹ÜµÀ´ÓÉÏÍùÏÂµÄµÚÒ»¸ö¿Õ¸ñµÄy×ø±ê 
-int lastHeight = 0, nowHeight = 0;	//lastHeightÎª×ó±ßÉÏÒ»¸ö¹ÜµÀµÄheightÊı¾İ, nowHeightÎªÏÖÔÚ¸Ã¹ÜµÀµÄheightÊı¾İ 
-int index = 0, times = 0;			//indexÎªÊı×édisÖĞµÄÏÂ±ê;   timesÓÃÓÚ¼ÆËã, Ã¿×óÆ½ÒÆ3´Î, ×îÓĞ¶ÎĞÂÔöÒ»ÁĞ 
-int money = 0;			//¼ÇÂ¼×¬ÁË¶àÉÙÇ® 
-bool gameOver = false;				//Ä¬ÈÏÓÎÏ·Î´½áÊø, ÓÎÏ·½áÊøÊ±¸ÄÎªtrue 
+int map[COLS][LINES];				//é¢„æœŸçš„åœ°å›¾ 
+int console[COLS][LINES];			//æ§åˆ¶å°ä¸­æ˜¾ç¤ºçš„åœ°å›¾ 
+int heights[COLS];					//heightsä¸ºç«–ç®¡é“ä»ä¸Šå¾€ä¸‹çš„ç¬¬ä¸€ä¸ªç©ºæ ¼çš„yåæ ‡ 
+int lastHeight = 0, nowHeight = 0;	//lastHeightä¸ºå·¦è¾¹ä¸Šä¸€ä¸ªç®¡é“çš„heightæ•°æ®, nowHeightä¸ºç°åœ¨è¯¥ç®¡é“çš„heightæ•°æ® 
+int index = 0, times = 0;			//indexä¸ºæ•°ç»„disä¸­çš„ä¸‹æ ‡;   timesç”¨äºè®¡ç®—, æ¯å·¦å¹³ç§»3æ¬¡, æœ€æœ‰æ®µæ–°å¢ä¸€åˆ— 
+int money = 0;			//è®°å½•èµšäº†å¤šå°‘é’± 
+bool gameOver = false;				//é»˜è®¤æ¸¸æˆæœªç»“æŸ, æ¸¸æˆç»“æŸæ—¶æ”¹ä¸ºtrue 
 
 
-void PrintChar(char *ch,UINT count,UINT x,UINT y) { //ÔÚ×ø±ê(x,y)´¦Êä³ö×Ö·û´®ch,chÀïÓĞcount¸ö×Ö·û
+void PrintChar(char *ch,UINT count,UINT x,UINT y) { //åœ¨åæ ‡(x,y)å¤„è¾“å‡ºå­—ç¬¦ä¸²ch,ché‡Œæœ‰countä¸ªå­—ç¬¦
 	HANDLE h=GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD pos;
 	ULONG unuse;
 	pos.X=x;
 	pos.Y=y;
-	CONSOLE_SCREEN_BUFFER_INFO bInfo; // ´°¿Ú»º³åÇøĞÅÏ¢
+	CONSOLE_SCREEN_BUFFER_INFO bInfo; // çª—å£ç¼“å†²åŒºä¿¡æ¯
 	GetConsoleScreenBufferInfo(h, &bInfo );
 	WriteConsoleOutputCharacterA(h,ch,count,pos,&unuse);
 }
 
-int set_box(int x, int y) {				//ÔÚ(x, y)´¦·ÅÖÃ×Ö·ûcMap					
+int set_box(int x, int y) {				//åœ¨(x, y)å¤„æ”¾ç½®å­—ç¬¦cMap					
 
 	PrintChar(&cMap, 1, x, y); 
 	console[x][y] = 1;
@@ -57,7 +57,7 @@ int set_box(int x, int y) {				//ÔÚ(x, y)´¦·ÅÖÃ×Ö·ûcMap
 	return 0;
 }
 
-int clear_pos(int x, int y) {			//ÔÚ(x, y)´¦½«×Ö·û¸ÄÎª¿Õ¸ñ 
+int clear_pos(int x, int y) {			//åœ¨(x, y)å¤„å°†å­—ç¬¦æ”¹ä¸ºç©ºæ ¼ 
 	
 	PrintChar(&space, 1, x, y);
 
@@ -65,7 +65,7 @@ int clear_pos(int x, int y) {			//ÔÚ(x, y)´¦½«×Ö·û¸ÄÎª¿Õ¸ñ
 
 }
 
-int bird_walk(int y) {				//birdÒÆ¶¯Ò»²½ 
+int bird_walk(int y) {				//birdç§»åŠ¨ä¸€æ­¥ 
 
 	clear_pos(bird.x, bird.y);
 	PrintChar(&cBird, 1, bird.x, y);
@@ -74,21 +74,21 @@ int bird_walk(int y) {				//birdÒÆ¶¯Ò»²½
 	return 0;
 }
 
-int getRand(int minn, int maxn) {		//»ñÈ¡[minn, maxn)·¶Î§ÄÚµÄËæ»úÊı 
+int getRand(int minn, int maxn) {		//è·å–[minn, maxn)èŒƒå›´å†…çš„éšæœºæ•° 
 	if(maxn >= minn)
 		return rand()%(maxn-minn) + minn;
 	else
 		return 0;
 }
 
-int delay (int isBird) {				//ÑÓ³Ùº¯Êı, ·ÀÖ¹ÓÎÏ·½øĞĞ¹ı¿ì, ¿ØÖÆÓÎÏ·ËÙ¶È 
+int delay (int isBird) {				//å»¶è¿Ÿå‡½æ•°, é˜²æ­¢æ¸¸æˆè¿›è¡Œè¿‡å¿«, æ§åˆ¶æ¸¸æˆé€Ÿåº¦ 
 	if(isBird)
-		for(long i = 0; i <= pow(12,6); ++i);	//ÄñÊúÖ±ËÙ¶È 
+		for(long i = 0; i <= pow(12,6); ++i);	//é¸Ÿç«–ç›´é€Ÿåº¦ 
 	else
-		for(long i = 0; i <= pow(8,6); ++i);	//µØÍ¼Ïò×óÒÆ¶¯ËÙ¶È 
+		for(long i = 0; i <= pow(8,6); ++i);	//åœ°å›¾å‘å·¦ç§»åŠ¨é€Ÿåº¦ 
 }
 
-int show_map() {		//¸üĞÂµØÍ¼ 
+int show_map() {		//æ›´æ–°åœ°å›¾ 
 	
 	for(int i = 0; i < COLS; i++)
 		for(int j = 0; j <=25; j++)
@@ -99,7 +99,7 @@ int show_map() {		//¸üĞÂµØÍ¼
 	return 0;
 }
 
-int draw_map() {		//ÖØÖÆµØÍ¼Êı×é 
+int draw_map() {		//é‡åˆ¶åœ°å›¾æ•°ç»„ 
 	
 	for(int i = 0; i < COLS; i++)
 		for(int j = 0; j <=25; j++){
@@ -115,7 +115,7 @@ int draw_map() {		//ÖØÖÆµØÍ¼Êı×é
 	
 }
 
-int map_init() {	//µØÍ¼³õÊ¼»¯ 
+int map_init() {	//åœ°å›¾åˆå§‹åŒ– 
 
 	memset(map, 0, sizeof(map));
 	memset(heights, 0, sizeof(heights));
@@ -125,12 +125,12 @@ int map_init() {	//µØÍ¼³õÊ¼»¯
 		if(i%2 == 0)
 			set_box(i, 26);
 	}
-	char * help = "°´ÈÎÒâ¼ü¿ªÊ¼ÓÎÏ·, ¿Õ¸ñ¼üÌøÔ¾. "; 
+	char * help = "æŒ‰ä»»æ„é”®å¼€å§‹æ¸¸æˆ, ç©ºæ ¼é”®è·³è·ƒ. "; 
 	PrintChar(help, strlen(help), 0, 27);
 	return 0;
 }
 
-int gameover() {		//ÓÎÏ·½áÊøÊ±Ö´ĞĞ 
+int gameover() {		//æ¸¸æˆç»“æŸæ—¶æ‰§è¡Œ 
 	system("cls");
 	char cOver[] = "Game Over!";
 	char cMoney[COLS];
@@ -143,41 +143,41 @@ int gameover() {		//ÓÎÏ·½áÊøÊ±Ö´ĞĞ
 
 int Init() {
 
-	system("mode con cols=150 lines=35");		//¹Ì¶¨ÃüÁîĞĞ´óĞ¡ 
-	SetConsoleTitle("Flappy Bird");				//ÃüÁîĞĞ±êÌâ 
+	system("mode con cols=150 lines=35");		//å›ºå®šå‘½ä»¤è¡Œå¤§å° 
+	SetConsoleTitle("Flappy Bird");				//å‘½ä»¤è¡Œæ ‡é¢˜ 
 
-	//Òş²ØÃüÁîĞĞ¹â±ê 
+	//éšè—å‘½ä»¤è¡Œå…‰æ ‡ 
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO CursorInfo;
-	GetConsoleCursorInfo(handle, &CursorInfo);//»ñÈ¡¿ØÖÆÌ¨¹â±êĞÅÏ¢
-	CursorInfo.bVisible = false; //Òş²Ø¿ØÖÆÌ¨¹â±ê
-	SetConsoleCursorInfo(handle, &CursorInfo);//ÉèÖÃ¿ØÖÆÌ¨¹â±ê×´Ì¬
+	GetConsoleCursorInfo(handle, &CursorInfo);//è·å–æ§åˆ¶å°å…‰æ ‡ä¿¡æ¯
+	CursorInfo.bVisible = false; //éšè—æ§åˆ¶å°å…‰æ ‡
+	SetConsoleCursorInfo(handle, &CursorInfo);//è®¾ç½®æ§åˆ¶å°å…‰æ ‡çŠ¶æ€
 
-	//ÈöËæ»úÊıÖÖ×Ó 
+	//æ’’éšæœºæ•°ç§å­ 
 	srand((unsigned)time(NULL));
 
-	//³õÊ¼»¯µØÍ¼ºÍÄñ 
+	//åˆå§‹åŒ–åœ°å›¾å’Œé¸Ÿ 
 	map_init();
 	bird_walk(bird.y);
 	return 0;
 }
 
-//µØÍ¼Ïß³Ì²Ù×÷ 
+//åœ°å›¾çº¿ç¨‹æ“ä½œ 
 void * map_solve(void *a) {
 
-	lastHeight = getRand(3,20);		//ÏÈ¼Ù¶¨Ò»¸ölastHeight 
+	lastHeight = getRand(3,20);		//å…ˆå‡å®šä¸€ä¸ªlastHeight 
 	while(true) {
-		if(true == gameOver){		//ÓÎÏ·½áÊøÊ±Ö´ĞĞgameoverº¯Êı 
+		if(true == gameOver){		//æ¸¸æˆç»“æŸæ—¶æ‰§è¡Œgameoverå‡½æ•° 
 			gameover();
 			return 0;
 		}
 		delay(false);
-		for(int i = 0; i < COLS-2; i++) {	//½«µØÍ¼ÏòÇ°ÒÆ¶¯ 
+		for(int i = 0; i < COLS-2; i++) {	//å°†åœ°å›¾å‘å‰ç§»åŠ¨ 
 			heights[i] = heights[i+1];
 		}
 		heights[COLS-2] = 0; 
-		if(times % dist == 0) {				//Ã¿Èı´ÎÒÆ¶¯, Éú³ÉÒ»ÕûÌõÊú¹ÜµÀ 
-			times = 0;						//·ÀÖ¹Òç³öËùÒÔ¹éÎª0, µÈĞ§Îªtime %= 3; 
+		if(times % dist == 0) {				//æ¯ä¸‰æ¬¡ç§»åŠ¨, ç”Ÿæˆä¸€æ•´æ¡ç«–ç®¡é“ 
+			times = 0;						//é˜²æ­¢æº¢å‡ºæ‰€ä»¥å½’ä¸º0, ç­‰æ•ˆä¸ºtime %= 3; 
 			do {
 				nowHeight = lastHeight + getRand(-5, 5);
 			} while(nowHeight < spaces || nowHeight > 25-spaces*2);
@@ -192,7 +192,7 @@ void * map_solve(void *a) {
 
 	return NULL;
 }
-//ÄñÏòÉÏ·ÉĞĞµÄÊäÈëĞÅÏ¢ 
+//é¸Ÿå‘ä¸Šé£è¡Œçš„è¾“å…¥ä¿¡æ¯ 
 int up() {
 	int ch;
 	if(kbhit()) {
@@ -204,17 +204,17 @@ int up() {
 	return 0;
 }
 
-//ÄñÏß³Ì²Ù×÷ 
+//é¸Ÿçº¿ç¨‹æ“ä½œ 
 void * bird_solve(void *a) {
 	index = 0;
 	while(true) {
 		
-		if(true == gameOver){	//²»ÄÜÔÚ´Ë´Î½øĞĞÓÎÏ·½áÊøº¯Êı, ÒòÎª´ËÊ±µØÍ¼Î´±ØÒÑ¾­Í£Ö¹ÒÆ¶¯, ÇåÆÁº¯Êı¿ÉÄÜÊ§Ğ§. 
+		if(true == gameOver){	//ä¸èƒ½åœ¨æ­¤æ¬¡è¿›è¡Œæ¸¸æˆç»“æŸå‡½æ•°, å› ä¸ºæ­¤æ—¶åœ°å›¾æœªå¿…å·²ç»åœæ­¢ç§»åŠ¨, æ¸…å±å‡½æ•°å¯èƒ½å¤±æ•ˆ. 
 			return 0;
 		}
 		
 		delay(true);
-		int newY = bird.y + dis[index];		//ÄñÒÆ¶¯ºóĞÂµÄy×ø±ê 
+		int newY = bird.y + dis[index];		//é¸Ÿç§»åŠ¨åæ–°çš„yåæ ‡ 
 		if(newY > 25) {
 			newY = 25;
 			gameOver = true;
@@ -225,16 +225,16 @@ void * bird_solve(void *a) {
 			gameOver = true;
 			
 		}
-		if(1 == map[bird.x][bird.y] || 1 == map[bird.x - 1][bird.y]){	//Èç¹ûÄñÓöµ½·½¸ñÓÎÏ·½áÊø, Ö®ËùÒÔÓĞÁ½¸öÅĞ¶ÏÊÇÒòÎª·½¸ñÓĞÁ½¸ö×ø±ê¿í 
+		if(1 == map[bird.x][bird.y] || 1 == map[bird.x - 1][bird.y]){	//å¦‚æœé¸Ÿé‡åˆ°æ–¹æ ¼æ¸¸æˆç»“æŸ, ä¹‹æ‰€ä»¥æœ‰ä¸¤ä¸ªåˆ¤æ–­æ˜¯å› ä¸ºæ–¹æ ¼æœ‰ä¸¤ä¸ªåæ ‡å®½ 
 			gameOver = true;
 			continue;
 		}
 		bird_walk(newY);
-		if(heights[bird.x] != 0){		//Èç¹ûÓöµ½Êú¹ÜµÀ,Ôòmoney++; 
+		if(heights[bird.x] != 0){		//å¦‚æœé‡åˆ°ç«–ç®¡é“,åˆ™money++; 
 			money++;
 		}
-		index++;		//½øĞĞÏÂÒ»¸ö³Ì¶ÈµÄÉı½µ 
-		if(up())		//µã»÷¿Õ¸ñºó,ÖØĞÂ¿ªÊ¼Éı½µ 
+		index++;		//è¿›è¡Œä¸‹ä¸€ä¸ªç¨‹åº¦çš„å‡é™ 
+		if(up())		//ç‚¹å‡»ç©ºæ ¼å,é‡æ–°å¼€å§‹å‡é™ 
 			index = 0;
 	}
 
@@ -246,8 +246,8 @@ int main(int argc, char* argv[]) {
 	Init();
 	
 	while(true) {
-		if(kbhit()) {	//ÇÃ»÷ÈÎºÎ¼üºó¿ªÊ¼ÓÎÏ· 
-			//´´½¨Ïß³Ì 
+		if(kbhit()) {	//æ•²å‡»ä»»ä½•é”®åå¼€å§‹æ¸¸æˆ 
+			//åˆ›å»ºçº¿ç¨‹ 
 			if(pthread_create(&tMap, NULL, map_solve, NULL) == -1) {
 				puts("fail to create pthread t0");
 				exit(1);
@@ -258,7 +258,7 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 
-			// ÈÃ½ø³ÌµÈ´ıÆäËûÏß³Ì½áÊø,·ÀÖ¹½ø³ÌÍË³öµ¼ÖÂÏß³Ì½áÊø 
+			// è®©è¿›ç¨‹ç­‰å¾…å…¶ä»–çº¿ç¨‹ç»“æŸ,é˜²æ­¢è¿›ç¨‹é€€å‡ºå¯¼è‡´çº¿ç¨‹ç»“æŸ 
 			void * result;
 			if(pthread_join(tMap, &result) == -1) {
 				puts("fail to recollect t0");
@@ -273,7 +273,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	getchar();	//»Ø³µ½áÊøÓÎÏ· 
+	getchar();	//å›è½¦ç»“æŸæ¸¸æˆ 
 
 	return 0;
 }
